@@ -1,0 +1,107 @@
+APEX FINANCIAL SOLUTIONS — DIGITAL FORENSIC INVESTIGATION FINDINGS
+Case: DFIR-001 | Simulated training investigation | Status: Core examination complete; final validation pending
+Examiner: Nayanthi Weerasuriya
+Examination date: 2026-10-13
+Tool: Autopsy 4.23.1
+Display timezone: IST / UTC+05:30 (Sri Lanka local time)
+
+1. PURPOSE AND SCOPE
+A fictional corporate data-handling scenario was constructed on a 1 GB Windows virtual hard disk. This examination aims to identify active files, recover deleted material, examine Windows Recycle Bin artifacts, verify evidence integrity and reconstruct recorded filesystem events. It is a controlled educational exercise, not an actual theft investigation.
+
+2. EVIDENCE HANDLING AND INTEGRITY
+Original: Apex-Lab.vhd
+Preserved master: 01_Evidence\Master\Master copy.vhd
+Analysis copy: 01_Evidence\Working\Working copy.vhd
+SHA-256 of all three VHD files at initial verification:
+34BF5F094CE7CC1977C69CF6C929F48978C4F27C19F7DFFA4EE769FD645AEFDC
+The hashes matched at verification, supporting byte-for-byte equality at that point. This is a whole-VHD hash, not an individual file hash. The master was reserved for preservation, and the working image was added to Autopsy. Recheck integrity at case closure and document the new results.
+
+3. E01 — DELETED INTERNAL BUDGET DOCUMENT
+File: Internal_Budget_Fictional.txt
+Path: /img_Working copy.vhd/vol_vol2/Confidential/Internal_Budget_Fictional.txt
+Status: File name and metadata unallocated; listed by Autopsy under File Views > Deleted Files > All.
+MIME: text/plain | Size: 686 bytes | Autopsy internal ID: 72
+Created: 2026-10-13 21:17:41
+Modified: 2026-10-13 21:17:41
+Accessed: 2026-10-13 21:17:41
+Metadata changed: 2026-10-13 21:21:36
+Autopsy's Text view shows readable original budget contents, including a fictional IT budget of LKR 12,000,000 and a cybersecurity allocation of LKR 3,000,000. The file had been deleted by Shift+Delete during the simulation. The later NTFS metadata-change timestamp is NOT by itself proof of the deletion time. The available artifacts do not identify who acted or why.
+Supporting screenshots: E01_Deleted_File_Listing.png; E01_Deleted_File_Content.png; E01_Deleted_File_Metadata.png.
+
+4. E02 — ACTIVE CLIENT-LIST CSV
+File: Client_List_Fictional.csv
+Path: /img_Working copy.vhd/vol_vol2/Confidential/Client_List_Fictional.csv
+Status: File name and metadata allocated | MIME: text/csv | Size: 258 bytes
+Created / Modified / Accessed / Changed: 2026-10-13 21:19:57
+The CSV content was readable in Autopsy's Text view and contains fictional client entries. The matching timestamps do not prove that the file was never opened or modified subsequently and do not demonstrate unauthorized transfer.
+Supporting screenshot references (verify saved filenames): E02_Client_List_Content.png; E02_Client_List_Metadata.png.
+
+5. E03 — ACTIVE QUARTERLY-REVENUE CSV
+File: Q3_Revenue_Fictional.csv
+Path: /img_Working copy.vhd/vol_vol2/Confidential/Q3_Revenue_Fictional.csv
+Status: File name and metadata allocated | MIME: text/csv | Size: 173 bytes
+Created / Modified / Accessed / Changed: 2026-10-13 21:20:39
+The CSV content was readable and contains fictional revenue, expenses and profit data. Presence of the file alone does not prove improper disclosure.
+Supporting screenshot references (verify saved filenames): E03_Revenue_Content.png; E03_Revenue_Metadata.png.
+
+6. E04 — MODIFIED MEETING NOTES
+File: Meeting_Notes.txt
+Path: /img_Working copy.vhd/vol_vol2/Notes/Meeting_Notes.txt
+Status: File name and metadata allocated | MIME: text/plain | Size: 699 bytes
+Created: 2026-10-13 21:18:04
+Modified / Accessed / Changed: 2026-10-13 21:21:27
+The recovered text includes: "Follow-up: Review confidential data handling procedures." The modified timestamp is 3 minutes 23 seconds after creation. This is consistent with the known edit made in the simulation, although the timestamps alone cannot establish which text was inserted.
+Supporting screenshot references (verify saved filenames): E04_Meeting_Notes_Content.png; E04_Meeting_Notes_Metadata.png.
+
+7. E05 — RECYCLE BIN CLIENT-LIST TEXT FILE
+Recycled content: $RAMTAZN.txt (allocated; readable; 258 bytes)
+Associated metadata: $IAMTAZN.txt (112 bytes)
+Recycle Bin folder: $RECYCLE.BIN/S-1-5-21-470949179-1592158974-3916691181-1001/
+Original path decoded from $I UTF-16LE data: F:\Confidential\Client_List_Fictional.txt
+Original size decoded from $I: 258 bytes
+Deletion timestamp decoded from $I FILETIME: 2026-10-13 21:20:06.793 UTC+05:30
+Recycled $R file created/modified: 2026-10-13 21:16:28; accessed: 21:19:22; metadata changed: 21:20:06.
+The $R content shows the fictional client-list CSV-formatted text. The $I record independently supplies the original path, size and Recycle Bin deletion time. Normal Windows Delete in this simulation moved the file into Recycle Bin storage; it did not render the content inaccessible.
+Supporting screenshots: E05 — Earlier deleted client-list text file.png; E05_Recycle_Bin_Metadata.png. The $I hex bytes are preserved in the case notes/conversation; save a screenshot of the $I Hex view if not already done.
+
+8. E06 — RECYCLE BIN QUARTERLY-REVENUE TEXT FILE
+Recycled content: $RF6G3QU.txt (allocated; readable; 173 bytes)
+Associated metadata: $IF6G3QU.txt (110 bytes)
+Recycle Bin folder: $RECYCLE.BIN/S-1-5-21-470949179-1592158974-3916691181-1001/
+Original path decoded from $I UTF-16LE data: F:\Confidential\Q3_Revenue_Fictional.txt
+Original size decoded from $I: 173 bytes
+Deletion timestamp decoded from $I FILETIME: 2026-10-13 21:20:43.469 UTC+05:30
+Recycled $R file created/modified: 2026-10-13 21:16:57; accessed: 21:20:21; metadata changed: 21:20:43.
+The $R content displays readable fictional quarterly financial data. The $I record supplies the original file path, original size and a Recycle Bin deletion timestamp. These fields are distinct from the $R file's ordinary NTFS timestamps.
+Supporting screenshots: E06 — Earlier deleted revenue text file.png; E06_Recycle_Bin_Metadata.png. Save an $I Hex screenshot if one is not yet in the evidence folder.
+
+9. TIMELINE AND COMPARISON
+The companion Evidence_Timeline_Final.csv preserves observed events and their sources in chronological order. E05 and E06 Recycle Bin deletion timestamps were decoded from $I FILETIME values, while ordinary file creation/change timestamps came from Autopsy filesystem metadata. The E01 Changed timestamp is not asserted to be its deletion time.
+Timeline screenshot: TL01_Forensic_Timeline.png (rename earlier E04_Forensic_Timeline.png, if necessary).
+Compare this observed timeline to Simulation_Log.txt, and record any discrepancies before final report sign-off.
+
+10.Simulation Log and Forensic Timeline Validation
+
+The reconstructed forensic timeline was compared with the activity log maintained during the controlled evidence-preparation exercise.
+
+The modification timestamp of Meeting_Notes.txt (21:21:27) was consistent with the approximately recorded modification time of 21:21.
+
+The deleted budget document's filesystem metadata-change timestamp (21:21:36) was consistent with the approximately recorded deletion activity at 21:22. However, this metadata timestamp does not independently establish the exact deletion time.
+
+The Recycle Bin metadata confirmed deletion timestamps of 21:20:06.793 for the original client-list text file and 21:20:43.469 for the original revenue text file.
+
+The replacement CSV documents had creation timestamps of 21:19:57 and 21:20:39, respectively, indicating that the recorded CSV creation events preceded the corresponding Recycle Bin deletion events.
+
+Overall, the examined artifacts were consistent with the controlled simulation. No significant contradictions were identified within the recorded observations. The activity log contained approximate times and did not document the precise timing of every action.
+
+11. METHODS, LIMITATIONS AND CONCLUSIONS
+Methods: SHA-256 comparison of VHD copies; Autopsy data-source browsing, file metadata examination, text viewing, deleted-files listing, Recycle Bin artifact investigation and timeline review; manual interpretation of $I bytes (version 2, original size, FILETIME and UTF-16LE original path).
+Limitations: This is an intentionally constructed fictional dataset. File timestamps can be affected by filesystem and application behavior; lack of an artifact is not proof of secure erasure. Visible textual recovery is not a full independent validation of every byte. No endpoint USB history, authentication events or user-attribution evidence was collected. The screenshot and report filenames listed above must be checked against files actually saved.
+Conclusion: The investigation established recovery of a Shift+Delete budget file (E01), readable allocated business files (E02–E04), and two normally deleted documents retained in the Recycle Bin (E05–E06). The $I files supplied original paths and precise recycle times for E05 and E06. None of the observations establishes real data theft or a responsible individual.
+
+11. FINAL CHECKS BEFORE PUBLISHING
+[ ] Confirm all referenced screenshots are saved under consistent names.
+[ ] Compare Evidence_Timeline_Final.csv against Simulation_Log.txt.
+[ ] Capture $I hex screenshots and record the manual-decoding method.
+[ ] Recalculate VHD copy SHA-256 values and log verification time.
+[ ] Generate the final PDF case report and redact irrelevant system identifiers if publishing publicly.
